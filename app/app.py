@@ -2,7 +2,6 @@
 import math
 import streamlit as st
 import pandas as pd
-from streamlit_extras.stylable_container import stylable_container
 from io import BytesIO
 from PIL import Image
 
@@ -48,17 +47,8 @@ def main():
 
     # Sidebar Reset Button with Red Styling
     with st.sidebar:
-        with stylable_container(
-            "red",
-            css_styles="""
-            button {
-                background-color: #FF0000 !important;
-                color: white !important;
-            }
-            """
-        ):
-            if st.button("Reset App"):
-                reset_app()
+        if st.button("Reset App"):
+            reset_app()
 
     # Initialize Model Repository and Prediction Service
     model_repo = ModelRepository()
@@ -208,58 +198,48 @@ def main():
             except Exception as e:
                 st.error(f"Error processing {uploaded_file.name}: {e}")
 
-    # Add a "Run Predictions" button with Green Styling
-    with stylable_container(
-        "green",
-        css_styles="""
-        button {
-            background-color: #00FF00 !important;
-            color: black !important;
-        }
-        """
-    ):
-        if st.button("Run Predictions"):
-            if st.session_state['images']:
-                try:
-                    # Initialize list to hold feature vectors
-                    features_list = []
-                    image_titles = []
-                    
-                    # Initialize progress spinner
-                    with st.spinner("Extracting image features and running raveling severity predictions. Please wait as this may take a few minutes..."):
-                        for title, data in st.session_state['images'].items():
-                            # Check if features are already extracted
-                            if data['features'] is None:
-                                # Extract features using original image bytes
-                                feature_vector = feature_extractor.extract_features(data['image_data'])
-                                st.session_state['images'][title]['features'] = feature_vector
-                                # st.write(f"Extracted features for {title}.")
-                            else:
-                                feature_vector = data['features']
-                                # st.write(f"Using cached features for {title}.")
-                            
-                            features_list.append(feature_vector)
-                            image_titles.append(title)
-                    
-                    # Run predictions
-                    predictions = prediction_service.predict(features_list)
-                    # st.write(f"Predictions: {predictions}")
+    if st.button("Run Predictions"):
+        if st.session_state['images']:
+            try:
+                # Initialize list to hold feature vectors
+                features_list = []
+                image_titles = []
+                
+                # Initialize progress spinner
+                with st.spinner("Extracting image features and running raveling severity predictions. Please wait as this may take a few minutes..."):
+                    for title, data in st.session_state['images'].items():
+                        # Check if features are already extracted
+                        if data['features'] is None:
+                            # Extract features using original image bytes
+                            feature_vector = feature_extractor.extract_features(data['image_data'])
+                            st.session_state['images'][title]['features'] = feature_vector
+                            # st.write(f"Extracted features for {title}.")
+                        else:
+                            feature_vector = data['features']
+                            # st.write(f"Using cached features for {title}.")
+                        
+                        features_list.append(feature_vector)
+                        image_titles.append(title)
+                
+                # Run predictions
+                predictions = prediction_service.predict(features_list)
+                # st.write(f"Predictions: {predictions}")
 
-                    # Convert predictions to integers if necessary
-                    predictions = [int(pred) for pred in predictions]
+                # Convert predictions to integers if necessary
+                predictions = [int(pred) for pred in predictions]
 
-                    # Update predictions in session state and database
-                    for idx, title in enumerate(image_titles):
-                        pred = predictions[idx]
-                        st.session_state['images'][title]['prediction'] = pred
-                        update_image_prediction(title, pred) # updates here too
-                        # st.write(f"Updated prediction for {title}: {pred}")
-                    
-                    st.success("Predictions have been successfully updated.")
-                except Exception as e:
-                    st.error(f"Error running predictions: {e}")
-            else:
-                st.warning("No images available for prediction.")
+                # Update predictions in session state and database
+                for idx, title in enumerate(image_titles):
+                    pred = predictions[idx]
+                    st.session_state['images'][title]['prediction'] = pred
+                    update_image_prediction(title, pred) # updates here too
+                    # st.write(f"Updated prediction for {title}: {pred}")
+                
+                st.success("Predictions have been successfully updated.")
+            except Exception as e:
+                st.error(f"Error running predictions: {e}")
+        else:
+            st.warning("No images available for prediction.")
 
     # Define pagination for displaying images
     if st.session_state['images']:
