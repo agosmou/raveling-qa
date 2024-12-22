@@ -1,0 +1,6 @@
+services:
+  streamlit:
+    build:
+      context: .
+    ports:
+      - "80:80"

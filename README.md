@@ -1,7 +1,7 @@
 
 # Raveling App
 
-A Streamlit application for predicting and QA'ing the severity of Raveling using pre-trained machine learning models.
+A Streamlit application for predicting and QA'ing the severity of Raveling using a pre-trained random forest machine learning model
 
 ## Application Features
 
@@ -11,6 +11,10 @@ A Streamlit application for predicting and QA'ing the severity of Raveling using
 - **Input Ground Truth Values**: Input or modify ground truth severity values for each image.
 - **Download Ground Truth CSV**: Download the CSV containing image titles and their corresponding severity values.
 - **Compare with Ground Truth**: If ground truth data is provided, view a comparison table between predictions and actual values.
+
+## Instructions
+
+Please the `guide.md` file or the PDF for a comprehensive tutorial on using the application.
 
 ## Running Locally
 
@@ -35,7 +39,22 @@ A Streamlit application for predicting and QA'ing the severity of Raveling using
    streamlit run app.py
    ```
 
-## Running with Docker (Work In Progress)
+4. **Testing the app**
+   Use the `test_files/` directory for some artifacts you can use to test the application
+
+## Running on vm
+
+1. simply make sure the `./run.sh` has executable permissions and run it within the vm
+
+
+## Running with Docker Compose
+
+1. ```bash
+   docker compose up
+   ```
+
+
+**Essentially running Docker under the hood so you could do:**
 
 1. **Build the Docker image** (optional)
 
@@ -46,7 +65,17 @@ A Streamlit application for predicting and QA'ing the severity of Raveling using
 2. **Run the Docker container**
 
    ```bash
-   docker run -p 8501:8501 streamlit
+   docker run -p 80:80 streamlit
    ```
 
-For more details on deploying with Docker, see the [Streamlit Docker Documentation](https://docs.streamlit.io/deploy/tutorials/docker).
+## TODO
+
+- [X] Add a "Run predictions button" to decouple expensive operations from image upload
+
+- [X] Modify the feature extractor based on Xinan's script
+
+- [X] Setup Docker to deploy app
+
+- [X] Add a modifiable instructional document for DOT engineer
+
+- [ ] Add auth to the application
