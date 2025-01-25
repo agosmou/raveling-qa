@@ -1,4 +1,3 @@
-### File: ./models/model_repository.py ###
 # models/model_repository.py
 import os
 import pickle
